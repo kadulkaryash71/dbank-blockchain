@@ -1,4 +1,5 @@
 import Debug "mo:base/Debug";
+import Nat "mo:base/Nat";
 
 actor DBank {
   var currentVal = 300;
@@ -18,17 +19,19 @@ actor DBank {
 
 
   public func withdraw(amount: Nat) {
-    currentVal -= amount;
 
-    Debug.print(debug_show(currentVal));
+    // By default, when numbers are assigned to variables the variable becomes a Natural number type. But the range of Nat is 0-infinity.
+    // Therefore we typecast a variable to Int.
+    let tempVal: Int = currentVal - amount;
+
+    if (tempVal >= 0){
+      currentVal -= amount;
+      Debug.print(debug_show(currentVal));
+    } else {
+      // Typecasting
+      Debug.print(debug_show("Insufficient balance. You only have " # Nat.toText(currentVal) # " crypts in your account."));
+    }
+    
+
   }
-  /* 
-  Running this long command everytime can be tediuos. Using Candid UI instead which reduces the work of typing everything out.
-  Follow the steps to use the Candid UI:
-  1. Run command `dfx canister id __Candid_UI`
-  2. Copy the ID obtained here.
-  3. Now go to the browser URL and type https://localhost:8000/?canisterId={your-candid-id}
-  4. It gives a UI where it first asks the canister ID running right now. To obtain that id run the command on commandline `dfx canister id`
-  5. There you go. Click the call button as many times as you want. Mind the argumenst if there are any.
-  */
 }
