@@ -1,6 +1,7 @@
 service : {
   checkBalance: () -> (float64) query;
   compound: () -> () oneway;
+  compoundPM: () -> () oneway;
   topUp: (float64) -> () oneway;
   withdraw: (float64) -> () oneway;
 }
