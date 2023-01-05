@@ -1,41 +1,51 @@
 import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
+import Time "mo:base/Time";
+import Float "mo:base/Float";
 
 actor DBank {
 
-  // Orthogonal Persistence: A data persistence technique which keeps track of the changed states of the program even if the system restarts/crashes.
-  stable var currentVal = 300;
-  // currentVal := 100;
+  stable var currentVal: Float = 300;
 
-  // func keyword is used to make a function.
-  // This function increments the current value of the bank.
-  // Functions are private by default. Add a keyword "public" to make the function accessible from anywhere.
-  public func topUp(amount: Nat) {
+  stable var startTime = Time.now();
+
+  public func topUp(amount: Float) {
     currentVal += amount;
 
     Debug.print(debug_show(currentVal));
   };
 
-  // to call public functions, use the command `dfx canister call ${canister_name} ${function_name} [(argument1, argument2,...)]`
-  // e.g., dfx canister call dbank topUp 
-
-  public func withdraw(amount: Nat) {
-    // By default, when numbers are assigned to variables the variable becomes a Natural number type. But the range of Nat is 0-infinity.
-    // Therefore we typecast a variable to Int.
-    let tempVal: Int = currentVal - amount;
+  public func withdraw(amount: Float) {
+    let tempVal: Float = currentVal - amount;
 
     if (tempVal >= 0){
       currentVal -= amount;
       Debug.print(debug_show(currentVal));
     } else {
-      // Typecasting
-      Debug.print(debug_show("Insufficient balance. You only have " # Nat.toText(currentVal) # " crypts in your account."));
+      Debug.print(debug_show("Insufficient balance. You only have " # Float.toText(currentVal) # " crypts in your account."));
     }
   };
 
-  // query keyword makes the retrieval faster, hence quicker results. Functions are either query or update. Update by default.
-  public query func checkBalanace () : async Nat {
+  public query func checkBalance () : async Float {
     // Similar to a get function
     return currentVal;
+  };
+
+
+  // Compound Interest at RoI = 1% per second
+  public func compound () {
+    var currentTime = Time.now();
+    var timeElapsedNS = currentTime - startTime;
+    var timeElapsedPM = timeElapsedNS / 1000000000;
+
+    currentVal := currentVal * (1.01 ** Float.fromInt(timeElapsedPM));
+  };
+  // Compound Interest at RoI = 1% per minute
+  public func compoundPM () {
+    var currentTime = Time.now();
+    var timeElapsedNS = currentTime - startTime;
+    var timeElapsedPM = timeElapsedNS / 60000000000;
+
+    currentVal := currentVal * (1.01 ** Float.fromInt(timeElapsedPM));
   };
 }
