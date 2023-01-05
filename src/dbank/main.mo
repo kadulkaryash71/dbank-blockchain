@@ -2,6 +2,8 @@ import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
 
 actor DBank {
+
+  // Orthogonal Persistence: A data persistence technique which keeps track of the changed states of the program even if the system restarts/crashes.
   var currentVal = 300;
   currentVal := 100;
 
@@ -17,9 +19,7 @@ actor DBank {
   // to call public functions, use the command `dfx canister call ${canister_name} ${function_name} [(argument1, argument2,...)]`
   // e.g., dfx canister call dbank topUp 
 
-
   public func withdraw(amount: Nat) {
-
     // By default, when numbers are assigned to variables the variable becomes a Natural number type. But the range of Nat is 0-infinity.
     // Therefore we typecast a variable to Int.
     let tempVal: Int = currentVal - amount;
@@ -31,7 +31,11 @@ actor DBank {
       // Typecasting
       Debug.print(debug_show("Insufficient balance. You only have " # Nat.toText(currentVal) # " crypts in your account."));
     }
-    
+  };
 
-  }
+  // query keyword makes the retrieval faster, hence quicker results. Functions are either query or update. Update by default.
+  public query func checkBalanace () : async Nat {
+    // Similar to a get function
+    return currentVal;
+  };
 }
