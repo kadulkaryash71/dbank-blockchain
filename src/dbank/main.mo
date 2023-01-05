@@ -4,8 +4,8 @@ import Nat "mo:base/Nat";
 actor DBank {
 
   // Orthogonal Persistence: A data persistence technique which keeps track of the changed states of the program even if the system restarts/crashes.
-  var currentVal = 300;
-  currentVal := 100;
+  stable var currentVal = 300;
+  // currentVal := 100;
 
   // func keyword is used to make a function.
   // This function increments the current value of the bank.
